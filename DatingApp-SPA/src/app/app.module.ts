@@ -10,6 +10,7 @@ import { RouterModule } from '../../node_modules/@angular/router';
 import { AppComponent } from './app.component';
 import { NavComponent } from './nav/nav.component';
 import { AuthService } from './_services/auth.service';
+import { UserService } from './_services/user.service';
 import { HomeComponent } from './home/home.component';
 import { RegisterComponent } from './home/register/register.component';
 import { ErrorInterceptorProvider } from './_services/error.interceptor';
@@ -40,6 +41,7 @@ import { AuthGuard } from './_guards/auth.guard';
    providers: [
       AuthService,
       AlertifyService,
+      UserService,
       ErrorInterceptorProvider,
       AuthGuard
    ],
