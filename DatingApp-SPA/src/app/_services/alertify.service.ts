@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-//letting tslint know we know what we're doing here by using alertify.
+// letting tslint know we know what we're doing here by using alertify.
 declare let alertify: any;
 
 @Injectable({
