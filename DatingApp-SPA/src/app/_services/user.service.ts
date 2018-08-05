@@ -6,7 +6,8 @@ import { User } from '../_models/user';
 
 const httpOptions = {
   headers: new HttpHeaders({
-    'Authorization': `Bearer ${localStorage.getItem('token')}`})
+    Authorization: `Bearer ${localStorage.getItem('token')}`
+  })
 };
 
 @Injectable({
@@ -21,5 +22,9 @@ export class UserService {
   }
   getUser(id): Observable<User> {
     return this.http.get<User>(`${this.baseUrl}users/${id}`, httpOptions);
+  }
+  updateUser(id: number, user: User) {
+    console.log(id)
+    return this.http.put(this.baseUrl + 'users/' + id, user, httpOptions);
   }
 }
