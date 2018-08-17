@@ -12,5 +12,6 @@ namespace DatingApp.API.Models
     //Now that we define the relationship both ways, we can perform a cascade delete.
     public User User { get; set; }  
     public int UserId { get; set; }
+    public string PublicId { get; set; }
   }
 }
