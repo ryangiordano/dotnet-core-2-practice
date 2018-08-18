@@ -41,6 +41,7 @@ namespace DatingApp.API.Controllers
       var userToReturn = _mapper.Map<UserForDetailedDto>(createdUser);
       return CreatedAtRoute("GetUser", new {Controller="Users", id = createdUser.Id}, userToReturn);
     }
+    
     [HttpPost("Login")]
     public async Task<IActionResult> Login(UserForLoginDto userForLoginDto)
     {
