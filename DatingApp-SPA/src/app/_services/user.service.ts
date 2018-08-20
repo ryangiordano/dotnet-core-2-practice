@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { User } from '../_models/user';
+import { PaginatedResult } from '../_models/pagination';
+import { map } from '../../../node_modules/rxjs/operators';
 
 const httpOptions = {
   headers: new HttpHeaders({
@@ -17,8 +19,40 @@ export class UserService {
   baseUrl = environment.apiUrl;
 
   constructor(private http: HttpClient) {}
-  getUsers(): Observable<User[]> {
-    return this.http.get<User[]>(`${this.baseUrl}users`, httpOptions);
+  getUsers(page?, itemsPerPage?): Observable<PaginatedResult<User[]>> {
+    const paginatedResult: PaginatedResult<User[]> = new PaginatedResult<
+      User[]
+    >();
+
+    let params = new HttpParams();
+    if (page != null && itemsPerPage != null) {
+      params = params.append('pageNumber', page);
+      params = params.append('pageSize', itemsPerPage);
+    }
+    const options = Object.assign({}, httpOptions, {
+      observe: 'response',
+      params
+    });
+
+    return this.http
+      .get<User[]>(`${this.baseUrl}users`, {
+        observe: 'response',
+        params,
+        headers: new HttpHeaders({
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        })
+      })
+      .pipe(
+        map(response => {
+          paginatedResult.result = response.body;
+          if (response.headers.get('Pagination') != null) {
+            paginatedResult.pagination = JSON.parse(
+              response.headers.get('Pagination')
+            );
+          }
+          return paginatedResult;
+        })
+      );
   }
   getUser(id): Observable<User> {
     return this.http.get<User>(`${this.baseUrl}users/${id}`, httpOptions);
@@ -29,10 +63,15 @@ export class UserService {
   }
   setMainPhoto(userId: number, id: number) {
     return this.http.post(
-      `${this.baseUrl}users/${userId}/photos/${id}/setMain`, {}, httpOptions
+      `${this.baseUrl}users/${userId}/photos/${id}/setMain`,
+      {},
+      httpOptions
     );
   }
-  deletePhoto(userId: number, id: number){
-    return this.http.delete(`${this.baseUrl}users/${userId}/photos/${id}`, httpOptions);
+  deletePhoto(userId: number, id: number) {
+    return this.http.delete(
+      `${this.baseUrl}users/${userId}/photos/${id}`,
+      httpOptions
+    );
   }
 }
