@@ -28,6 +28,14 @@ namespace DatingApp.API.Controllers
     [HttpGet]
     public async Task<IActionResult> GetUsers([FromQuery]UserParams userParams)
     {
+      var currentUserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+      var userFromRepo = await _repo.GetUser(currentUserId);
+
+      userParams.UserId = currentUserId;
+
+      if(String.IsNullOrEmpty(userParams.Gender)){ // Checking if it's nullorempty because they can specify in the querystring in the url what gender they're looking for
+        userParams.Gender = userFromRepo.Gender == "male" ? "female" : "male"; // SJW Todo: allow user to specify, otherwise return all?
+      }
       var users = await _repo.GetUsers(userParams);
       var usersToReturn = _mapper.Map<IEnumerable<UserForListDto>>(users);
 
