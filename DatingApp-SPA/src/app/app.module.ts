@@ -5,9 +5,15 @@ import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
-import { BsDropdownModule, TabsModule, BsDatepickerModule, PaginationModule, ButtonsModule } from 'ngx-bootstrap';
+import {
+  BsDropdownModule,
+  TabsModule,
+  BsDatepickerModule,
+  PaginationModule,
+  ButtonsModule
+} from 'ngx-bootstrap';
 import { RouterModule } from '@angular/router';
-import {NgxGalleryModule} from 'ngx-gallery';
+import { NgxGalleryModule } from 'ngx-gallery';
 import { FileUploadModule } from '../../node_modules/ng2-file-upload';
 import { TimeAgoPipe } from 'time-ago-pipe';
 
@@ -30,8 +36,7 @@ import { MemberListResolver } from './_resolvers/member-list.resolver';
 import { MemberEditComponent } from './members/member-edit/member-edit.component';
 import { MemberEditResolver } from './_resolvers/member-edit.resolver';
 import { PhotoEditorComponent } from './members/photo-editor/photo-editor.component';
-
-
+import { ListResolver } from './_resolvers/lists.resolver';
 
 export function tokenGetter() {
   return localStorage.getToken('token');
@@ -64,7 +69,7 @@ export function tokenGetter() {
     FileUploadModule,
     BsDatepickerModule.forRoot(),
     PaginationModule.forRoot(),
-    ButtonsModule.forRoot(),
+    ButtonsModule.forRoot()
     // TODO: Get JWT auth working with Angular 6.  Or upgrade to 7.
     // JwtModule.forRoot({
     //   config: {
@@ -84,7 +89,7 @@ export function tokenGetter() {
     MemberListResolver,
     MemberEditResolver,
     PreventUnsavedChanges,
-
+    ListResolver
   ],
   bootstrap: [AppComponent]
 })
