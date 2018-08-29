@@ -1,0 +1,55 @@
+.card {
+  border: none;
+}
+
+.chat {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.chat li {
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px dotted #bfbfbf;
+}
+
+.chat-line {
+  display: flex;
+  align-items: center;
+  flow-direction: row;
+  .chat-signature {
+    display: flex;
+    img {
+      margin: 0 10px;
+    }
+  }
+  &.sender{
+    .chat-signature{
+
+      order:1;
+    }
+    .chat-body{
+      margin-left: auto;
+
+      order:2;
+    }
+  }
+  &.recipient{
+    .chat-signature{
+      margin-left: auto;
+      order:2;
+    }
+  }
+
+
+}
+
+.rounded-circle {
+  height: 25px;
+  width: 25px;
+}
+
+.input-area {
+  max-height: 400px;
+}

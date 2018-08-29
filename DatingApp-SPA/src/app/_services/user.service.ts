@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { User } from '../_models/user';
 import { PaginatedResult } from '../_models/pagination';
 import { map } from '../../../node_modules/rxjs/operators';
+import { Message } from '../_models/Message';
 
 const httpOptions = {
   headers: new HttpHeaders({
@@ -98,6 +99,74 @@ export class UserService {
       `${this.baseUrl}users/${id}/like/${recipientId}`,
       {},
       httpOptions
+    );
+  }
+
+  getMessages(id: number, page?, itemsPerPage?, messageContainer?) {
+    const paginatedResult: PaginatedResult<Message[]> = new PaginatedResult<
+      Message[]
+    >();
+    let params = new HttpParams();
+    if (page != null && itemsPerPage != null) {
+      params = params.append('pageNumber', page);
+      params = params.append('pageSize', itemsPerPage);
+    }
+
+    params = params.append('MessageContainer', messageContainer);
+
+    return this.http
+      .get<Message[]>(`${this.baseUrl}users/${id}/messages`, {
+        observe: 'response',
+        params,
+        headers: new HttpHeaders({
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        })
+      })
+      .pipe(
+        map(response => {
+          paginatedResult.result = response.body;
+          if (response.headers.get('Pagination') !== null) {
+            paginatedResult.pagination = JSON.parse(
+              response.headers.get('Pagination')
+            );
+          }
+          return paginatedResult;
+        })
+      );
+  }
+  getMessageThread(id: number, recipientId: number) {
+    return this.http.get<Message[]>(
+      `${this.baseUrl}users/${id}/messages/thread/${recipientId}`,
+      httpOptions
+    );
+  }
+  sendMessage(id: number, message: Message) {
+    return this.http.post(`${this.baseUrl}users/${id}/messages`, message, {
+      headers: new HttpHeaders({
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      })
+    });
+  }
+  deleteMessage(messageId: number, userId: number) {
+    return this.http.post(
+      `${this.baseUrl}users/${userId}/messages/${messageId}`,
+      {},
+      {
+        headers: new HttpHeaders({
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        })
+      }
+    );
+  }
+  markAsRead(userId: number, messageId: number) {
+    return this.http.post(
+      `${this.baseUrl}users/${userId}/messages/${messageId}/read`,
+      {},
+      {
+        headers: new HttpHeaders({
+          Authorization: `Bearer ${localStorage.getItem('token')}`
+        })
+      }
     );
   }
 }

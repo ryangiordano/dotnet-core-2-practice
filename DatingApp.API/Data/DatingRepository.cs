@@ -119,22 +119,34 @@ namespace DatingApp.API.Data
       switch (messageParams.MessageContainer)
       {
         case "Inbox":
-          messages = messages.Where(m => m.RecipientId == messageParams.UserId);
+          messages = messages.Where(m => m.RecipientId == messageParams.UserId 
+          && !m.RecipientDeleted);
           break;
         case "Outbox":
-          messages = messages.Where(m => m.SenderId == messageParams.UserId);
+          messages = messages.Where(m => m.SenderId == messageParams.UserId 
+          && !m.SenderDeleted);
           break;
         default:
-          messages = messages.Where(m => m.RecipientId == messageParams.UserId && m.IsRead == false);
+          messages = messages.Where(m => m.RecipientId == messageParams.UserId 
+          && !m.RecipientDeleted 
+          &&  m.IsRead == false);
           break;
       }
-      messages = messages.OrderByDescending(d=>d.MessageSent);
+      messages = messages.OrderByDescending(d => d.MessageSent);
       return await PagedList<Message>.CreateAsync(messages, messageParams.PageNumber, messageParams.PageSize);
     }
 
-    public Task<IEnumerable<Message>> GetMessageThread(int userId, int recipientId)
+    public async Task<IEnumerable<Message>> GetMessageThread(int userId, int recipientId)
     {
-      throw new NotImplementedException();
+      var messages = await _context.Messages
+      .Include(u => u.Sender).ThenInclude(p => p.Photos)
+      .Include(u => u.Recipient).ThenInclude(p => p.Photos)
+      .Where(m => m.RecipientId == userId && !m.RecipientDeleted &&m.SenderId == recipientId
+      || m.RecipientId == recipientId && !m.SenderDeleted && m.SenderId == userId)
+      .OrderByDescending(m=>m.MessageSent)
+      .ToListAsync();
+
+      return messages;
     }
   }
 }
