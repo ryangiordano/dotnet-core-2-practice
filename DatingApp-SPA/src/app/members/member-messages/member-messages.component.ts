@@ -31,7 +31,7 @@ export class MemberMessagesComponent implements OnInit {
       .sendMessage(this.authService.decodedToken.nameid, this.newMessage)
       .subscribe(
         (message: Message) => {
-          this.messages.unshift(message);
+          this.messages.push(message);
           this.newMessage.content = '';
         },
         error => {
@@ -46,19 +46,19 @@ export class MemberMessagesComponent implements OnInit {
       .pipe(
         tap((messages: Message[]) => {
           messages.forEach(m => {
-            console.log(m, currentUserId)
             if (!m.isRead && m.recipientId === currentUserId) {
-              console.log("Marking...")
-              this.userService.markAsRead(currentUserId, m.id).subscribe(d=>{
-                console.log(d)
-              });
+              this.userService
+                .markAsRead(currentUserId, m.id)
+                .subscribe(d => {});
             }
           });
         })
       ) // tap allows you to do something before subscribing to it
       .subscribe(
         messages => {
-          this.messages = messages;
+          this.messages = messages.sort((a, b) => {
+            return +new Date(a.messageSent) - +new Date(b.messageSent);
+          });
         },
         error => {
           this.alertify.error(error);
