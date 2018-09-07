@@ -29,6 +29,7 @@ export class NavComponent implements OnInit {
         this.alertify.success('Logged in Successfully');
       },
       err => {
+        console.log(err)
         this.alertify.error(err);
       },
       () => {

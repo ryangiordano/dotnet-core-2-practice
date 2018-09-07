@@ -1,3 +1,5 @@
+import { RolesModalComponent } from './admin/roles-modal/roles-modal.component';
+import { UserManagementComponent } from './admin/user-management/user-management.component';
 import { MemberMessagesComponent } from './members/member-messages/member-messages.component';
 import { PreventUnsavedChanges } from './_guards/prevent-unsaved-changes.guard';
 import { JwtModule } from '@auth0/angular-jwt';
@@ -11,7 +13,8 @@ import {
   TabsModule,
   BsDatepickerModule,
   PaginationModule,
-  ButtonsModule
+  ButtonsModule,
+  ModalModule
 } from 'ngx-bootstrap';
 import { RouterModule } from '@angular/router';
 import { NgxGalleryModule } from 'ngx-gallery';
@@ -28,6 +31,7 @@ import { ErrorInterceptorProvider } from './_services/error.interceptor';
 import { ListsComponent } from './lists/lists.component';
 import { MemberListComponent } from './members/member-list/member-list.component';
 import { MessagesComponent } from './messages/messages.component';
+import { AdminPanelComponent } from './admin/admin-panel/admin-panel.component';
 import { appRoutes } from './routes';
 import { AuthGuard } from './_guards/auth.guard';
 import { MemberCardComponent } from './members/member-card/member-card.component';
@@ -39,6 +43,9 @@ import { MemberEditResolver } from './_resolvers/member-edit.resolver';
 import { PhotoEditorComponent } from './members/photo-editor/photo-editor.component';
 import { ListResolver } from './_resolvers/lists.resolver';
 import { MessagesResolver } from './_resolvers/messages.resolver';
+import { HasRoleDirective } from './_directives/hasRole.directive';
+import { PhotoManagementComponent } from './admin/photo-management/photo-management.component';
+import { AdminService } from './_services/admin.service';
 
 export function tokenGetter() {
   return localStorage.getToken('token');
@@ -59,6 +66,11 @@ export function tokenGetter() {
     PhotoEditorComponent,
     TimeAgoPipe,
     MemberMessagesComponent,
+    AdminPanelComponent,
+    HasRoleDirective,
+    UserManagementComponent,
+    PhotoManagementComponent,
+    RolesModalComponent
   ],
   imports: [
     BrowserModule,
@@ -72,7 +84,8 @@ export function tokenGetter() {
     FileUploadModule,
     BsDatepickerModule.forRoot(),
     PaginationModule.forRoot(),
-    ButtonsModule.forRoot()
+    ButtonsModule.forRoot(),
+    ModalModule.forRoot(),
     // TODO: Get JWT auth working with Angular 6.  Or upgrade to 7.
     // JwtModule.forRoot({
     //   config: {
@@ -93,7 +106,11 @@ export function tokenGetter() {
     MemberEditResolver,
     MessagesResolver,
     PreventUnsavedChanges,
-    ListResolver
+    ListResolver,
+    AdminService
+  ],
+  entryComponents: [
+    RolesModalComponent
   ],
   bootstrap: [AppComponent]
 })

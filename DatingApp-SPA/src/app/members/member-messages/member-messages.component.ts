@@ -46,11 +46,11 @@ export class MemberMessagesComponent implements OnInit {
       .pipe(
         tap((messages: Message[]) => {
           messages.forEach(m => {
-            console.log(m, currentUserId)
+            console.log(m, currentUserId);
             if (!m.isRead && m.recipientId === currentUserId) {
-              console.log("Marking...")
-              this.userService.markAsRead(currentUserId, m.id).subscribe(d=>{
-                console.log(d)
+              console.log('Marking...');
+              this.userService.markAsRead(currentUserId, m.id).subscribe(d => {
+                console.log(d);
               });
             }
           });

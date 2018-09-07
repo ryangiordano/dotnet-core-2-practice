@@ -7,13 +7,17 @@ using System.Threading.Tasks;
 using AutoMapper;
 using DatingApp.API.Data;
 using DatingApp.API.Helpers;
+using DatingApp.API.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -36,17 +40,22 @@ namespace DatingApp.API
     public void ConfigureServices(IServiceCollection services)
     {
       services.AddDbContext<DataContext>(x => x.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
-      services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
-      .AddJsonOptions(opt =>
+
+      IdentityBuilder builder = services.AddIdentityCore<User>(opt =>
       {
-        opt.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
-      });
-      services.AddCors();
-      services.Configure<CloudinarySettings>(Configuration.GetSection("CloudinarySettings"));
-      services.AddAutoMapper();
-      services.AddTransient<Seed>();
-      services.AddScoped<IAuthRepository, AuthRepository>();
-      services.AddScoped<IDatingRepository, DatingRepository>();
+        opt.Password.RequireDigit = false;
+        opt.Password.RequiredLength = 4;
+        opt.Password.RequireNonAlphanumeric = false;
+        opt.Password.RequireUppercase = false; //weak passwords for practice app
+      }); //Can stick with jwt bearer token
+
+      //Config to be able to query users and pull back roles
+      builder = new IdentityBuilder(builder.UserType, typeof(Role), builder.Services);
+      builder.AddEntityFrameworkStores<DataContext>();
+      builder.AddRoleValidator<RoleValidator<Role>>();
+      builder.AddRoleManager<RoleManager<Role>>();
+      builder.AddSignInManager<SignInManager<User>>(); // Need to add these because we're using AddIdentityCore.
+
       services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
       .AddJwtBearer(options =>
       {
@@ -58,6 +67,37 @@ namespace DatingApp.API
           ValidateAudience = false
         };
       });
+
+      services.AddAuthorization(options =>
+      {
+        options.AddPolicy("RequireAdminRole", policy => policy.RequireRole("Admin"));
+        options.AddPolicy("ModeratePhotoRole", policy => policy.RequireRole("Admin", "Moderator"));
+        options.AddPolicy("VipOnly", policy => policy.RequireRole("VIP"));
+      });
+
+      services.AddMvc(options =>
+      {
+        //Add options for authorization so we don't have to make the check on all controller methods
+        //We can remove all of the authorize attributes from our controllers
+        var policy = new AuthorizationPolicyBuilder()
+        .RequireAuthenticatedUser()
+        .Build();
+        options.Filters.Add(new AuthorizeFilter(policy));
+
+      })
+      .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
+      .AddJsonOptions(opt =>
+      {
+        opt.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+      });
+      services.AddCors();
+      services.Configure<CloudinarySettings>(Configuration.GetSection("CloudinarySettings"));
+      // add check for environemtn set to production
+      Mapper.Reset();
+      services.AddAutoMapper();
+      services.AddTransient<Seed>();
+      services.AddScoped<IAuthRepository, AuthRepository>();
+      services.AddScoped<IDatingRepository, DatingRepository>();
       services.AddScoped<LogUserActivity>();
 
     }
@@ -87,7 +127,7 @@ namespace DatingApp.API
         });
         // app.UseHsts();
       }
-      // seeder.SeedUsers();
+      seeder.SeedUsers();
       app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
       // app.UseHttpsRedirection();
       app.UseAuthentication();
