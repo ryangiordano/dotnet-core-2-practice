@@ -46,6 +46,7 @@ namespace DatingApp.API.Controllers
       return Ok(photo);
 
     }
+
     [HttpPost]
     public async Task<IActionResult> AddPhotoForUser(int userId, [FromForm]PhotoForCreationDto photoForCreationDto)
     {
@@ -77,6 +78,7 @@ namespace DatingApp.API.Controllers
       }
       photoForCreationDto.Url = uploadResult.Uri.ToString();
       photoForCreationDto.PublicId = uploadResult.PublicId;
+      photoForCreationDto.IsApproved = false;
 
       var photo = _mapper.Map<Photo>(photoForCreationDto);
       //Check to see if the user has a main photo.  If not, set this one to their main.
@@ -159,11 +161,13 @@ namespace DatingApp.API.Controllers
         }
 
       }
-      if (photoFromRepo.PublicId == null)
-      {
-        _repo.Delete(photoFromRepo);
 
+      _repo.Delete(photoFromRepo);
+      if (await _repo.SaveAll())
+      {
+        return Ok();
       }
+
 
       return BadRequest("Failed to delete the photo");
 

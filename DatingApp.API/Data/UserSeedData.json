@@ -12,6 +12,7 @@
     "City": "Haena",
     "Country": "Georgia",
     "Photos": [{
+      "isApproved": true,
       "url": "https://randomuser.me/api/portraits/women/54.jpg",
       "isMain": true,
       "description": "Dolore esse laboris dolore labore id anim tempor pariatur esse cupidatat fugiat incididunt amet sunt."
@@ -31,6 +32,7 @@
     "City": "Hiwasse",
     "Country": "Switzerland",
     "Photos": [{
+      "isApproved": true,
       "url": "https://randomuser.me/api/portraits/women/28.jpg",
       "isMain": true,
       "description": "Et cillum quis adipisicing aute deserunt incididunt duis proident excepteur excepteur sunt aliquip."
@@ -50,6 +52,7 @@
     "City": "Richville",
     "Country": "Sao Tome and Principe",
     "Photos": [{
+      "isApproved": true,
       "url": "https://randomuser.me/api/portraits/women/2.jpg",
       "isMain": true,
       "description": "Aliqua incididunt ea sint consectetur dolor ullamco ea sit."
@@ -69,6 +72,7 @@
     "City": "Whitestone",
     "Country": "Denmark",
     "Photos": [{
+      "isApproved": true,
       "url": "https://randomuser.me/api/portraits/women/73.jpg",
       "isMain": true,
       "description": "Elit velit nulla nisi enim ut id fugiat veniam dolor reprehenderit fugiat quis."
@@ -88,6 +92,7 @@
     "City": "Yogaville",
     "Country": "Mauritius",
     "Photos": [{
+      "isApproved": true,
       "url": "https://randomuser.me/api/portraits/women/49.jpg",
       "isMain": true,
       "description": "Eu qui occaecat qui in fugiat."
@@ -107,6 +112,7 @@
     "City": "Torboy",
     "Country": "Antigua and Barbuda",
     "Photos": [{
+      "isApproved": true,
       "url": "https://randomuser.me/api/portraits/men/76.jpg",
       "isMain": true,
       "description": "Amet consequat tempor ut ad exercitation id qui nulla."
@@ -126,6 +132,7 @@
     "City": "Brooktrails",
     "Country": "Bosnia and Herzegovina",
     "Photos": [{
+      "isApproved": true,
       "url": "https://randomuser.me/api/portraits/men/90.jpg",
       "isMain": true,
       "description": "Magna quis culpa Lorem commodo cupidatat reprehenderit mollit consequat nostrud irure deserunt."
@@ -145,6 +152,7 @@
     "City": "Sultana",
     "Country": "Uganda",
     "Photos": [{
+      "isApproved": true,
       "url": "https://randomuser.me/api/portraits/men/57.jpg",
       "isMain": true,
       "description": "Minim est tempor qui in magna reprehenderit sunt occaecat velit dolor velit et velit."
@@ -164,6 +172,7 @@
     "City": "Tilleda",
     "Country": "Greece",
     "Photos": [{
+      "isApproved": true,
       "url": "https://randomuser.me/api/portraits/men/83.jpg",
       "isMain": true,
       "description": "Lorem eiusmod consequat aliquip minim et sint sunt."
@@ -183,6 +192,7 @@
     "City": "Tetherow",
     "Country": "Jordan",
     "Photos": [{
+      "isApproved": true,
       "url": "https://randomuser.me/api/portraits/men/85.jpg",
       "isMain": true,
       "description": "Magna ad laboris elit esse exercitation eu est cillum."

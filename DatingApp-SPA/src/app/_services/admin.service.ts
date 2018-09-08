@@ -26,4 +26,16 @@ export class AdminService {
       httpOptions
     );
   }
+  getUnapprovedPhotos() {
+    return this.http.get(
+      `${this.baseUrl}admin/photosForModeration`,
+      httpOptions
+    );
+  }
+  approvePhoto(photoId, approved) {
+    return this.http.get(
+      `${this.baseUrl}admin/approvePhoto/${photoId}/${approved}`,
+      httpOptions
+    );
+  }
 }

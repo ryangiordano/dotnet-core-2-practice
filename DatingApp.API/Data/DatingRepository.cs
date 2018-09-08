@@ -38,13 +38,17 @@ namespace DatingApp.API.Data
 
     public async Task<Photo> GetPhoto(int id)
     {
-      var photo = await _context.Photos.FirstOrDefaultAsync(p => p.Id == id);
+      var photo = await _context.Photos.IgnoreQueryFilters().FirstOrDefaultAsync(p => p.Id == id);
       return photo;
     }
 
     public async Task<User> GetUser(int id)
     {
       var user = await _context.Users.Include(p => p.Photos).FirstOrDefaultAsync(u => u.Id == id);
+      return user;
+    }
+    public async Task<User> GetUserWithAllPhotos(int id){
+            var user = await _context.Users.Include(p => p.Photos).IgnoreQueryFilters().FirstOrDefaultAsync(u => u.Id == id);
       return user;
     }
     private async Task<IEnumerable<int>> GetUserLikes(int id, bool likers)
@@ -119,17 +123,17 @@ namespace DatingApp.API.Data
       switch (messageParams.MessageContainer)
       {
         case "Inbox":
-          messages = messages.Where(m => m.RecipientId == messageParams.UserId 
+          messages = messages.Where(m => m.RecipientId == messageParams.UserId
           && !m.RecipientDeleted);
           break;
         case "Outbox":
-          messages = messages.Where(m => m.SenderId == messageParams.UserId 
+          messages = messages.Where(m => m.SenderId == messageParams.UserId
           && !m.SenderDeleted);
           break;
         default:
-          messages = messages.Where(m => m.RecipientId == messageParams.UserId 
-          && !m.RecipientDeleted 
-          &&  m.IsRead == false);
+          messages = messages.Where(m => m.RecipientId == messageParams.UserId
+          && !m.RecipientDeleted
+          && m.IsRead == false);
           break;
       }
       messages = messages.OrderByDescending(d => d.MessageSent);
@@ -139,14 +143,25 @@ namespace DatingApp.API.Data
     public async Task<IEnumerable<Message>> GetMessageThread(int userId, int recipientId)
     {
       var messages = await _context.Messages
-      .Include(u => u.Sender).ThenInclude(p => p.Photos)
-      .Include(u => u.Recipient).ThenInclude(p => p.Photos)
-      .Where(m => m.RecipientId == userId && !m.RecipientDeleted &&m.SenderId == recipientId
+      .Include(u => u.Sender).ThenInclude(u => u.Photos)
+      .Include(u => u.Recipient).ThenInclude(u => u.Photos)
+      .Where(m => m.RecipientId == userId && !m.RecipientDeleted && m.SenderId == recipientId
       || m.RecipientId == recipientId && !m.SenderDeleted && m.SenderId == userId)
-      .OrderByDescending(m=>m.MessageSent)
+      .OrderByDescending(m => m.MessageSent)
       .ToListAsync();
 
       return messages;
+    }
+
+    public async Task<IEnumerable<Photo>> GetUnapprovedPhotos()
+    {
+      var photos = await _context.Photos
+      .Include(u=>u.User)
+      .Where(photo=>!photo.IsApproved)
+      .OrderByDescending(photo=>photo.DateAdded)
+      .IgnoreQueryFilters()
+      .ToListAsync();
+      return photos;
     }
   }
 }

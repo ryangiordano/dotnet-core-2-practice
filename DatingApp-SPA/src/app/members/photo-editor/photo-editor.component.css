@@ -8,6 +8,23 @@ img.img-thumbnail {
   border: dotted 3px red;
 }
 
-input[type=file]{
-  color:transparent;
+input[type=file] {
+  color: transparent;
+}
+
+.unapproved img {
+  opacity: .5;
+}
+
+.unapproved {
+  display: relative;
+}
+
+.unapproved span {
+  position: absolute;
+  bottom: 30%;
+  color:#E95420;
+  text-shadow: 1px 1px rgba(0,0,0,.3);
+  text-align: center;
+  font-weight: bold;
 }
